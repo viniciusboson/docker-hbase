@@ -2,6 +2,8 @@ FROM alpine:3.5
 
 ARG BUILD_DATE
 ARG VCS_REF
+ARG HB_VERSION=2.2.0
+ARG HP_VERSION=3.1.1
 
 LABEL \
     maintainer="smizy" \
@@ -14,9 +16,9 @@ LABEL \
     org.label-schema.vcs-type="Git" \
     org.label-schema.vcs-url="https://github.com/viniciusboson/docker-hbase"
 
-ENV HBASE_VERSION    2.2.0
+ENV HBASE_VERSION    $HB_VERSION
 ENV HBASE_HOME       /usr/local/hbase-${HBASE_VERSION}
-ENV HADOOP_VERSION   3.1.1
+ENV HADOOP_VERSION   $HP_VERSION
 ENV HADOOP_HOME      /usr/local/hadoop-${HADOOP_VERSION}
 ENV HBASE_CONF_DIR   ${HBASE_HOME}/conf
 ENV HBASE_LOG_DIR    /var/log/hbase
