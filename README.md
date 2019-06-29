@@ -11,7 +11,7 @@ Apache HBase docker image based on alpine
 # load default env as needed
 eval $(docker-machine env default)
 
-# network 
+# network
 docker network create vnet
 
 # make docker-compose.yml with small size (no redudency)
@@ -32,7 +32,7 @@ docker-compose ps
      Name                   Command               State                  Ports                
 ---------------------------------------------------------------------------------------------
 datanode-1       entrypoint.sh datanode           Up      50010/tcp, 50020/tcp, 50075/tcp     
-hmaster-1        entrypoint.sh hmaster-1          Up      16000/tcp, 0.0.0.0:32771->16010/tcp 
+hmaster-1        entrypoint.sh hmaster-1          Up      16000/tcp, 0.0.0.0:32771->16010/tcp
 namenode-1       entrypoint.sh namenode-1         Up      0.0.0.0:32770->50070/tcp, 8020/tcp  
 regionserver-1   entrypoint.sh regionserver       Up      16020/tcp, 16030/tcp                
 zookeeper-1      entrypoint.sh -server 1 1 vnet   Up      2181/tcp, 2888/tcp, 3888/tcp

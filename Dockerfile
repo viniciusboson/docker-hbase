@@ -2,22 +2,23 @@ FROM alpine:3.5
 
 ARG BUILD_DATE
 ARG VCS_REF
-ARG VERSION
+ARG HB_VERSION
+ARG HP_VERSION
 
 LABEL \
     maintainer="smizy" \
     org.label-schema.build-date=$BUILD_DATE \
     org.label-schema.docker.dockerfile="/Dockerfile" \
     org.label-schema.license="Apache License 2.0" \
-    org.label-schema.name="smizy/hbase" \
-    org.label-schema.url="https://github.com/smizy" \
+    org.label-schema.name="viniciusboson/hbase" \
+    org.label-schema.url="https://github.com/viniciusboson" \
     org.label-schema.vcs-ref=$VCS_REF \
     org.label-schema.vcs-type="Git" \
-    org.label-schema.vcs-url="https://github.com/smizy/docker-hbase"
+    org.label-schema.vcs-url="https://github.com/viniciusboson/docker-hbase"
 
-ENV HBASE_VERSION    $VERSION
+ENV HBASE_VERSION    $HB_VERSION
 ENV HBASE_HOME       /usr/local/hbase-${HBASE_VERSION}
-ENV HADOOP_VERSION   2.7
+ENV HADOOP_VERSION   $HP_VERSION
 ENV HADOOP_HOME      /usr/local/hadoop-${HADOOP_VERSION}
 ENV HBASE_CONF_DIR   ${HBASE_HOME}/conf
 ENV HBASE_LOG_DIR    /var/log/hbase
@@ -37,13 +38,13 @@ RUN set -x \
     && apk --no-cache add \
         bash \
         openjdk8-jre \
-        su-exec \ 
+        su-exec \
     && mirror_url=$( \
         wget -q -O - http://www.apache.org/dyn/closer.cgi/hbase/ \
         | sed -n 's#.*href="\(http://ftp.[^"]*\)".*#\1#p' \
         | head -n 1 \
-    ) \   
-    && wget -q -O - ${mirror_url}/hbase-${HBASE_VERSION}/hbase-${HBASE_VERSION}-bin.tar.gz \
+    ) \
+    && wget -q -O - ${mirror_url}/${HBASE_VERSION}/hbase-${HBASE_VERSION}-bin.tar.gz \
         | tar -xzf - -C /usr/local \
     && ln -s /usr/local/hbase-${HBASE_VERSION} /usr/local/hbase-${HBASE_VERSION:0:3} \
     ## user/dir/permmsion
@@ -53,7 +54,7 @@ RUN set -x \
        done \
     && for user in root hbase docker; do \
          adduser ${user} hadoop; \
-       done \       
+       done \
     && mkdir -p \
         ${HBASE_TMP_DIR} \
         ${HBASE_LOG_DIR} \
@@ -62,14 +63,14 @@ RUN set -x \
         ${HBASE_LOG_DIR} \
     && chown -R hbase:hadoop \
         ${HBASE_TMP_DIR} \
-        ${HBASE_LOG_DIR}  \      
+        ${HBASE_LOG_DIR}  \
     && rm -rf ${HBASE_HOME}/docs \
-    && sed -i.bk -e 's/PermSize/MetaspaceSize/g' ${HBASE_CONF_DIR}/hbase-env.sh  
+    && sed -i.bk -e 's/PermSize/MetaspaceSize/g' ${HBASE_CONF_DIR}/hbase-env.sh
 
-COPY etc/*  ${HBASE_CONF_DIR}/    
-COPY bin/*  /usr/local/bin/ 
+COPY etc/*  ${HBASE_CONF_DIR}/
+COPY bin/*  /usr/local/bin/
 COPY lib/*  /usr/local/lib/
-    
+
 WORKDIR ${HBASE_HOME}
 
 VOLUME ["${HBASE_TMP_DIR}", "${HBASE_LOG_DIR}", "${HBASE_HOME}"]
